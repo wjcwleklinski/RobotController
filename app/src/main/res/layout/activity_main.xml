@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="28dp"
         android:layout_marginStart="28dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="10dp"
         android:text="Angle X:"
         android:textSize="20sp"
         app:layout_constraintStart_toEndOf="parent"
@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="28dp"
         android:layout_marginStart="28dp"
-        android:layout_marginTop="160dp"
+        android:layout_marginTop="130dp"
         android:text="Angle X:"
         android:textSize="20sp"
         app:layout_constraintStart_toEndOf="parent"
@@ -86,7 +86,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="32dp"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="10dp"
         android:text="0,0"
         android:textSize="20sp"
         app:layout_constraintStart_toEndOf="@+id/labelx"
@@ -122,7 +122,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="32dp"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="160dp"
+        android:layout_marginTop="130dp"
         android:text="0,0"
         android:textSize="20sp"
         app:layout_constraintStart_toEndOf="@+id/labelx2"
@@ -163,12 +163,51 @@
         android:layout_marginStart="300dp"
         android:layout_marginTop="10dp"
         android:background="#ff2424"
+        android:text="Start Jogging"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.84"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
+
+    <CheckBox
+        android:id="@+id/checkBoxX"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="28dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="15dp"
+        android:checked="false"
+        android:tag="x"
+        android:text="X"
+        android:textColorLink="@color/colorAccent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/labelz2" />
+
+    <CheckBox
+        android:id="@+id/checkBoxY"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="15dp"
+        android:tag="y"
+        android:text="Y"
+        app:layout_constraintStart_toEndOf="@+id/checkBoxX"
+        app:layout_constraintTop_toBottomOf="@+id/labelz2" />
+
+    <CheckBox
+        android:id="@+id/checkBoxZ"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:tag="z"
+        android:text="Z"
+        app:layout_constraintStart_toEndOf="@+id/checkBoxY"
+        app:layout_constraintTop_toBottomOf="@+id/aberrationZ" />
 
 
 </android.support.constraint.ConstraintLayout>
