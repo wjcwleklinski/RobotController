@@ -6,6 +6,9 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.nfc.Tag;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -33,33 +36,33 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private CheckBox checkBoxZ;
 
     private SensorManager sensorManager;
-    private Sensor orientationSensor;
-
-    private float[] bufferX = {0,0,0,0};
-    private float[] bufferY = {0,0,0,0};
-    private float[] bufferZ = {0,0,0,0};
-
-    float filteredX = 0;
-    float filteredY = 0;
-    float filteredZ = 0;
 
     float finalX = 0;
     float finalY = 0;
     float finalZ = 0;
 
-    private float[] orientation = new float[3];
-
     float xPressed = 0;
     float yPressed = 0;
     float zPressed = 0;
 
+    private final String TAG = "Info";
 
     private boolean isJogPressed = false;
     private boolean xChecked = false;
     private boolean yChecked = false;
     private boolean zChecked = false;
 
-    private static final int BUFFER = 8;
+    //--------------------------------------
+    private float[] mAccelerometerReading = new float[3];
+    private float[] mMagnetometerReading = new float[3];
+
+    private float[] mRotationMatrix = new float[9];
+    private float[] mOrientationAngles = new float[3];  //4 according to SO
+
+    private float[] filteredVals;
+
+    //--------------------------------------------------
+    Filter filter = new Filter(3);
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -85,9 +88,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     Log.i("Info", "Action down.");
                     isJogPressed = true;
                     view.setBackgroundColor(0xFF941212);
-                    xPressed = filteredX;
-                    yPressed = filteredY;
-                    zPressed = filteredZ;
+
+                    xPressed = filteredVals[0];
+                    yPressed = filteredVals[1];
+                    zPressed = filteredVals[2];
 
                 }
                 // released
@@ -107,22 +111,26 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void onResume() {
         super.onResume();
         Log.i("Debug", "onResume method called.");
 
-        /** defining orientation sensor */
-        orientationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
+        // defining sensors: accelerometer and magnetometer
 
-        /** checking if sensor is available and registering onChange listener */
-        if ( orientationSensor != null ) {
-            Log.i("Info", "Orientation sensor available.");
-            sensorManager.registerListener(this,orientationSensor,SensorManager.SENSOR_DELAY_NORMAL);
-
+        Sensor accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        if(accelerometer != null) {
+            sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_UI);
         } else {
-            Log.i("Info", "Orientation sensor not available.");
-            Toast.makeText(this, "Hardware requirements not met.", Toast.LENGTH_LONG ).show();
+            Log.i(TAG, "Accelerometer not available.");
+        }
+
+        Sensor magnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+        if(magnetometer != null) {
+            sensorManager.registerListener(this, magnetometer, SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_UI);
+        } else {
+            Log.i(TAG, "Magnetometer not available.");
         }
 
     }
@@ -140,54 +148,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
 
-// UMIARKOWANIE ŹLE TO JEST
-        //Log.i("Info", "Sensor changed.");
-        orientation = sensorEvent.values;
-
-        angleX.setText(String.valueOf(orientation[0]));
-        angleY.setText(String.valueOf(orientation[1]));
-        angleZ.setText(String.valueOf(orientation[2]));
-
-
-        if(isJogPressed) {
-            finalX = (filteredX - xPressed) / bufferX.length;
-            finalY = (filteredY - yPressed) / bufferY.length;
-            finalZ = (filteredZ- zPressed) / bufferZ.length;
-
-        } else {
-            finalX = 0;
-            finalY = 0;
-            finalZ = 0;
+        if(sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            System.arraycopy(sensorEvent.values,0, mAccelerometerReading, 0,mAccelerometerReading.length);
+        }
+        else if(sensorEvent.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
+            System.arraycopy(sensorEvent.values, 0 ,mMagnetometerReading, 0, mMagnetometerReading.length);
         }
 
-        if (xChecked)
-            finalX = 0;
-        if (yChecked)
-            finalY = 0;
-        if (zChecked)
-            finalZ = 0;
-
-        aberrationX.setText(String.valueOf(Math.round(finalX)));
-        aberrationY.setText(String.valueOf(Math.round(finalY)));
-        aberrationZ.setText(String.valueOf(Math.round(finalZ)));
-
-        filteredX += orientation[0];
-        filteredY += orientation[1];
-        filteredZ += orientation[2];
-
-        System.arraycopy(bufferX,1, bufferX, 0, bufferX.length - 1);
-        System.arraycopy(bufferY,1, bufferY, 0, bufferY.length - 1);
-        System.arraycopy(bufferZ,1, bufferZ, 0, bufferZ.length - 1);
-
-        bufferX[bufferX.length - 1] = orientation[0];
-        bufferY[bufferY.length - 1] = orientation[1];
-        bufferZ[bufferZ.length - 1] = orientation[2];
-
-
-
-        filteredX -= bufferX[0];
-        filteredY -= bufferY[0];
-        filteredZ -= bufferZ[0];
+        updateAngles();
 
     }
 
@@ -237,6 +205,53 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     }
 
+    private void updateAngles() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                // getting orientation matrix
+                SensorManager.getRotationMatrix(mRotationMatrix, null, mAccelerometerReading, mMagnetometerReading);
+                SensorManager.getOrientation(mRotationMatrix, mOrientationAngles);
+
+                // displaying raw orientation
+                angleX.setText(String.valueOf(Math.toDegrees(mOrientationAngles[0])));
+                angleY.setText(String.valueOf(Math.toDegrees(mOrientationAngles[1])));
+                angleZ.setText(String.valueOf(Math.toDegrees(mOrientationAngles[2])));
+
+                // filtering angles
+                filteredVals = filter.movingAverage(mOrientationAngles);
+
+                // rad to deg conversion
+                for(int i = 0; i < filteredVals.length; i++) {
+                    filteredVals[i] = (float)Math.toDegrees(filteredVals[i]);
+                }
+
+                // if jog button is pressed, angles are measured from zero
+                if(isJogPressed) {
+                    finalX = Math.round(filteredVals[0] - xPressed);
+                    finalY = Math.round(filteredVals[1] - yPressed);
+                    finalZ = Math.round(filteredVals[2] - zPressed);
+                } else {
+                    finalX = 0;
+                    finalY = 0;
+                    finalZ = 0;
+                }
+
+                // checking checkboxes
+                if (xChecked)
+                    finalX = 0;
+                if (yChecked)
+                    finalY = 0;
+                if (zChecked)
+                    finalZ = 0;
+
+                // displaying final angles
+                aberrationX.setText(String.valueOf(finalX));
+                aberrationY.setText(String.valueOf(finalY));
+                aberrationZ.setText(String.valueOf(finalZ));
+            }
+        });
+    }
 
 
 
