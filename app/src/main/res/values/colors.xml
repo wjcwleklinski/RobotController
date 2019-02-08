@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#fb0a12</color>
+    <color name="statusBar">#de7607</color>
+    <color name="background">#e7a217</color>
+    <color name="axisDefault">#000</color>
+    <color name="axisHighlight">#303f9f</color>
+    <color name="androidBar">#e7a217</color>
+</resources>

@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/backgroundgradient"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/labelx"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="28dp"
+        android:layout_marginLeft="28dp"
+        android:layout_marginTop="10dp"
+        android:text="Raw X:"
+        android:textSize="15sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/labelx2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="28dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="130dp"
+        android:text="Angle X:"
+        android:textSize="15sp"
+        app:layout_constraintStart_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/labely"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="28dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="10dp"
+        android:text="Raw Y:"
+        android:textSize="15sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/labelx" />
+
+    <TextView
+        android:id="@+id/labely2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="28dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="10dp"
+        android:text="Angle Y:"
+        android:textSize="15sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/labelx2" />
+
+    <TextView
+        android:id="@+id/labelz"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="28dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="10dp"
+        android:text="Raw Z:"
+        android:textSize="15sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/labely" />
+
+    <TextView
+        android:id="@+id/labelz2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="28dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="10dp"
+        android:text="Angle Z:"
+        android:textSize="15sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/labely2" />
+
+    <TextView
+        android:id="@+id/angleX"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="32dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="10dp"
+        android:text="0,0"
+        android:textSize="15sp"
+        app:layout_constraintStart_toEndOf="@+id/labelx"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/angleY"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="32dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="10dp"
+        android:text="0,0"
+        android:textSize="15sp"
+        app:layout_constraintStart_toEndOf="@+id/labely"
+        app:layout_constraintTop_toBottomOf="@+id/angleX" />
+
+    <TextView
+        android:id="@+id/angleZ"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="32dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="10dp"
+        android:text="0,0"
+        android:textSize="15sp"
+        app:layout_constraintStart_toEndOf="@+id/labelz"
+        app:layout_constraintTop_toBottomOf="@+id/angleY" />
+
+    <TextView
+        android:id="@+id/aberrationX"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="32dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="130dp"
+        android:text="0,0"
+        android:textSize="15sp"
+        app:layout_constraintStart_toEndOf="@+id/labelx2"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/aberrationY"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="32dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="10dp"
+        android:text="0,0"
+        android:textSize="15sp"
+        app:layout_constraintStart_toEndOf="@+id/labely2"
+        app:layout_constraintTop_toBottomOf="@+id/aberrationX" />
+
+    <TextView
+        android:id="@+id/aberrationZ"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="32dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="10dp"
+        android:text="0,0"
+        android:textSize="15sp"
+        app:layout_constraintStart_toEndOf="@+id/labelz2"
+        app:layout_constraintTop_toBottomOf="@+id/aberrationY" />
+
+    <Button
+        android:id="@+id/jogButton"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="50dp"
+        android:background="@drawable/roundbtn"
+        android:text="Start Jogging"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <CheckBox
+        android:id="@+id/checkBoxX"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="28dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="15dp"
+        android:checked="false"
+        android:tag="x"
+        android:text="X"
+        android:textColorLink="@color/colorAccent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/labelz2" />
+
+    <CheckBox
+        android:id="@+id/checkBoxY"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="15dp"
+        android:tag="y"
+        android:text="Y"
+        app:layout_constraintStart_toEndOf="@+id/checkBoxX"
+        app:layout_constraintTop_toBottomOf="@+id/labelz2" />
+
+    <CheckBox
+        android:id="@+id/checkBoxZ"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:tag="z"
+        android:text="Z"
+        app:layout_constraintStart_toEndOf="@+id/checkBoxY"
+        app:layout_constraintTop_toBottomOf="@+id/aberrationZ" />
+
+    <SeekBar
+        android:id="@+id/seekBar"
+        android:layout_width="173dp"
+        android:layout_height="25dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/checkBoxZ" />
+
+    <TextView
+        android:id="@+id/seekBarTextView"
+        android:layout_width="76dp"
+        android:layout_height="25dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginTop="21dp"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@+id/seekBar"
+        app:layout_constraintTop_toBottomOf="@+id/checkBoxY" />
+
+    <ImageView
+        android:id="@+id/imageMinusX"
+        android:layout_width="46dp"
+        android:layout_height="83dp"
+        android:layout_marginStart="170dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/lepszyminusx"
+        android:layout_marginLeft="170dp" />
+
+    <ImageView
+        android:id="@+id/imageZ"
+        android:layout_width="34dp"
+        android:layout_height="69dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toEndOf="@+id/imageMinusX"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/lepszyz" />
+
+    <ImageView
+        android:id="@+id/imageMinusY"
+        android:layout_width="46dp"
+        android:layout_height="83dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toEndOf="@+id/imageZ"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/lepszyminusy" />
+
+    <ImageView
+        android:id="@+id/imageY"
+        android:layout_width="46dp"
+        android:layout_height="84dp"
+        android:layout_marginStart="170dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageMinusX"
+        app:srcCompat="@drawable/lepszyy" />
+
+    <ImageView
+        android:id="@+id/imageMinusZ"
+        android:layout_width="34dp"
+        android:layout_height="69dp"
+        app:layout_constraintStart_toEndOf="@+id/imageY"
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:srcCompat="@drawable/lepszyminusz" />
+
+    <ImageView
+        android:id="@+id/imageX"
+        android:layout_width="46dp"
+        android:layout_height="84dp"
+        app:layout_constraintStart_toEndOf="@+id/imageMinusZ"
+        app:layout_constraintTop_toBottomOf="@+id/imageMinusY"
+        app:srcCompat="@drawable/lepszyx" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="34dp"
+        android:layout_height="29dp"
+        app:layout_constraintStart_toEndOf="@+id/imageY"
+        app:layout_constraintTop_toBottomOf="@+id/imageZ"
+        app:srcCompat="@drawable/lepszycenter" />
+
+
+</android.support.constraint.ConstraintLayout>
