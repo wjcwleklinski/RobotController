@@ -14,9 +14,7 @@ public class AngleThread extends Thread {
 
     private final int BUFFER_SIZE = 10;
     private final int AXIS_COUNT = 3;
-
-    private long startTime = 0;
-    private float dt = 0;
+    private final int DEAD_ZONE = 2;
 
     private float[] utilRotationMatrix = new float[9];
     private float[] utilOrientationAngles = new float[3];
@@ -61,7 +59,6 @@ public class AngleThread extends Thread {
         this.IP = IP;
         this.port = port;
         initArrays();
-
     }
 
 
@@ -71,9 +68,9 @@ public class AngleThread extends Thread {
         System.arraycopy(accYBuffer, 1, accYBuffer, 0, BUFFER_SIZE - 1);
         System.arraycopy(accZBuffer, 1, accZBuffer, 0, BUFFER_SIZE - 1);
 
-        accXBuffer[BUFFER_SIZE - 1] = accReading[0];
+        accXBuffer[BUFFER_SIZE - 1] = accReading[2];
         accYBuffer[BUFFER_SIZE - 1] = accReading[1];
-        accZBuffer[BUFFER_SIZE - 1] = accReading[2];
+        accZBuffer[BUFFER_SIZE - 1] = accReading[0];
     }
 
     public void setGyroReading(float[] gyroReading) {
@@ -82,9 +79,9 @@ public class AngleThread extends Thread {
         System.arraycopy(gyroYBuffer, 1, gyroYBuffer, 0, BUFFER_SIZE - 1);
         System.arraycopy(gyroZBuffer, 1, gyroZBuffer, 0, BUFFER_SIZE - 1);
 
-        gyroXBuffer[BUFFER_SIZE - 1] = gyroReading[0];
+        gyroXBuffer[BUFFER_SIZE - 1] = gyroReading[2];
         gyroYBuffer[BUFFER_SIZE - 1] = gyroReading[1];
-        gyroZBuffer[BUFFER_SIZE - 1] = gyroReading[2];
+        gyroZBuffer[BUFFER_SIZE - 1] = gyroReading[0];
     }
 
     public void setMagnetReading(float[] magnetReading) {
@@ -93,9 +90,9 @@ public class AngleThread extends Thread {
         System.arraycopy(magnetYBuffer, 1, magnetYBuffer, 0, BUFFER_SIZE - 1);
         System.arraycopy(magnetZBuffer, 1, magnetZBuffer, 0, BUFFER_SIZE - 1);
 
-        magnetXBuffer[BUFFER_SIZE - 1] = magnetReading[0];
+        magnetXBuffer[BUFFER_SIZE - 1] = magnetReading[2];
         magnetYBuffer[BUFFER_SIZE - 1] = magnetReading[1];
-        magnetZBuffer[BUFFER_SIZE - 1] = magnetReading[2];
+        magnetZBuffer[BUFFER_SIZE - 1] = magnetReading[0];
     }
 
     public float[] getFilteredAngles() { return  filteredAngles; }
@@ -130,8 +127,15 @@ public class AngleThread extends Thread {
 
     public void run() {
         CrossComClient client = null;
+        Log.i("AngleThread", "AngleThread started");
+        try {
+            client = new CrossComClient(IP, port);
+            Log.i("Kuka connection", "Client created");
+        } catch(IOException ex) {
+            Log.i("Kuka connection", "Unable to create client");
+        }
 
-        while(!Thread.currentThread().isInterrupted())
+        while(!Thread.currentThread().isInterrupted()) {
 
             try {
                 SensorManager.getRotationMatrix(utilRotationMatrix, gyroReading, accReading, magnetReading); //null instead of gyro?
@@ -141,19 +145,19 @@ public class AngleThread extends Thread {
                 //Log.i("Pressed angles: ", Arrays.toString(pressedAngles));
                 //Log.i("Filtered angles: ", Arrays.toString(filteredAngles));
 
-                if(jogButtonPressed) {
-                    if(xCheckboxState)
-                        validatedAngles[0] = filteredAngles[0] - pressedAngles[0];
-                    else
-                        validatedAngles[0] = 0;
-                    if(yCheckboxState)
-                        validatedAngles[1] = filteredAngles[1] - pressedAngles[1];
-                    else
-                        validatedAngles[1] = 0;
-                    if(zCheckboxState)
+                if (jogButtonPressed) {
+                    if (xCheckboxState)
                         validatedAngles[2] = filteredAngles[2] - pressedAngles[2];
                     else
                         validatedAngles[2] = 0;
+                    if (yCheckboxState)
+                        validatedAngles[1] = filteredAngles[1] - pressedAngles[1];
+                    else
+                        validatedAngles[1] = 0;
+                    if (zCheckboxState)
+                        validatedAngles[0] = filteredAngles[0] - pressedAngles[0];
+                    else
+                        validatedAngles[0] = 0;
                 } else {
                     validatedAngles[0] = 0;
                     validatedAngles[1] = 0;
@@ -161,53 +165,59 @@ public class AngleThread extends Thread {
                 }
                 //Log.i("Validated angles: ", Arrays.toString(validatedAngles));
 
-                if(validatedAngles[0] > 1){
+                long roundedX = Math.round(Math.toDegrees(validatedAngles[2]));
+                long roundedY = Math.round(Math.toDegrees(validatedAngles[1]));
+                long roundedZ = Math.round(Math.toDegrees(validatedAngles[0]));
+                if (roundedX > DEAD_ZONE) {
                     x = step;
-                } else if(validatedAngles[0] < -1) {
+                } else if (roundedX < -DEAD_ZONE) {
                     x = -step;
                 } else {
                     x = 0;
                 }
 
-                if(validatedAngles[1] > 1){
+                if (roundedY > DEAD_ZONE) {
                     y = step;
-                } else if(validatedAngles[1] < -1) {
+                } else if (roundedY < -DEAD_ZONE) {
                     y = -step;
                 } else {
                     y = 0;
                 }
 
-                if(validatedAngles[2] > 1){
+                if (roundedZ > DEAD_ZONE) {
                     z = step;
-                } else if(validatedAngles[2] < -1) {
+                } else if (roundedZ < -DEAD_ZONE) {
                     z = -step;
                 } else {
                     z = 0;
                 }
                 angleThreadReady = true;
-
+                //Log.i("Kuka connection", "MYPOS: " + "{X " + x + ",Y " + y + ",Z " + z + "}");
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-            try{
-
-                client = new CrossComClient(IP, port);
+            try {
                 client.sendRequest(new Request(1, "MYPOS", "{X " + x + ",Y " + y + ",Z " + z + "}"));
                 Log.i("Kuka connection", "MYPOS: " + "{X " + x + ",Y " + y + ",Z " + z + "}");
                 client.sendRequest(new Request(0, "$OV_PRO", String.valueOf(seekbarProgress)));
                 Log.i("Kuka connection", "$OV_PRO" + String.valueOf(seekbarProgress));
 
             } catch (Exception ex) {
-                Log.i("Kuka connection: ", "Unable to connect.");
-            } finally {
+                Log.i("Kuka connection: ", "Unable to send request");
+            } /*finally {
                 try {
                     client.close();
                 } catch (Exception ex) {
-                    Log.i("Kuka connection", "Unable to close client.");
+                    Log.i("Kuka connection", "Unable to close client");
                 }
-            }
-
+            }*/
+        }
+        try {
+            client.close();
+        } catch (Exception ex) {
+            Log.i("Kuka connection", "Unable to close client");
+        }
     }
 
 

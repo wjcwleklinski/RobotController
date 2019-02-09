@@ -262,7 +262,8 @@
         android:layout_marginStart="170dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageMinusX"
-        app:srcCompat="@drawable/lepszyy" />
+        app:srcCompat="@drawable/lepszyy"
+        android:layout_marginLeft="170dp" />
 
     <ImageView
         android:id="@+id/imageMinusZ"

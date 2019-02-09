@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -57,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private SensorManager sensorManager;
 
     private final String TAG = "Main";
+    private final int DEAD_ZONE = 2;
 
     private float seekBarProgress = 1;
 
@@ -93,6 +95,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         //        WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.activity_main);
+        /* getting ip and port from menu activity */
         Intent starterIntent = getIntent();
         IP = starterIntent.getStringExtra("IP");
         port = starterIntent.getIntExtra("Port", 7000);
@@ -270,11 +273,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         checkBoxY.setOnCheckedChangeListener(checkBoxListener);
         checkBoxZ.setOnCheckedChangeListener(checkBoxListener);
 
-
+        seekBar.getProgressDrawable()
+                .setColorFilter(new PorterDuffColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_IN));
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 angleThread.setSeekbarProgress(seekBar.getProgress());
+                seekBarTextView.setText(String.valueOf(seekBar.getProgress()));
             }
 
             @Override
@@ -297,24 +302,24 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             @Override
             public void run() {
                     try {
-                        angleX.setText(String.valueOf(Math.round(Math.toDegrees(angleThread.getFilteredAngles()[0]))));
+                        angleX.setText(String.valueOf(Math.round(Math.toDegrees(angleThread.getFilteredAngles()[2]))));
                         angleY.setText(String.valueOf(Math.round(Math.toDegrees(angleThread.getFilteredAngles()[1]))));
-                        angleZ.setText(String.valueOf(Math.round(Math.toDegrees(angleThread.getFilteredAngles()[2]))));
+                        angleZ.setText(String.valueOf(Math.round(Math.toDegrees(angleThread.getFilteredAngles()[0]))));
 
-                        //validatedAngles = angleThread.getValidatedAngles();
+                        //validatedAngles = angleThread.getValidatedAngles(); //cant do that - synchro issues
 
                         validatedAngles[0] = Math.round(Math.toDegrees(angleThread.getValidatedAngles()[0]));
                         validatedAngles[1] = Math.round(Math.toDegrees(angleThread.getValidatedAngles()[1]));
                         validatedAngles[2] = Math.round(Math.toDegrees(angleThread.getValidatedAngles()[2]));
 
-                        aberrationX.setText(String.valueOf(validatedAngles[0]));
+                        aberrationX.setText(String.valueOf(validatedAngles[2]));
                         aberrationY.setText(String.valueOf(validatedAngles[1]));
-                        aberrationZ.setText(String.valueOf(validatedAngles[2]));
+                        aberrationZ.setText(String.valueOf(validatedAngles[0]));
 
-                        if (validatedAngles[0] > 1) {
+                        if (validatedAngles[2] > DEAD_ZONE) {
                             imageX.setColorFilter(imageX.getContext().getResources().getColor(R.color.axisHighlight), PorterDuff.Mode.SRC_ATOP);
                             imageMinusX.setColorFilter(imageMinusX.getContext().getResources().getColor(R.color.axisDefault), PorterDuff.Mode.SRC_ATOP);
-                        } else if (validatedAngles[0] < -1) {
+                        } else if (validatedAngles[2] < -DEAD_ZONE) {
                             imageX.setColorFilter(imageX.getContext().getResources().getColor(R.color.axisDefault), PorterDuff.Mode.SRC_ATOP);
                             imageMinusX.setColorFilter(imageMinusX.getContext().getResources().getColor(R.color.axisHighlight), PorterDuff.Mode.SRC_ATOP);
                         } else {
@@ -322,10 +327,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                             imageMinusX.setColorFilter(imageMinusX.getContext().getResources().getColor(R.color.axisDefault), PorterDuff.Mode.SRC_ATOP);
                         }
 
-                        if (validatedAngles[1] > 1) {
+                        if (validatedAngles[1] > DEAD_ZONE) {
                             imageY.setColorFilter(imageY.getContext().getResources().getColor(R.color.axisHighlight), PorterDuff.Mode.SRC_ATOP);
                             imageMinusY.setColorFilter(imageMinusY.getContext().getResources().getColor(R.color.axisDefault), PorterDuff.Mode.SRC_ATOP);
-                        } else if (validatedAngles[1] < -1) {
+                        } else if (validatedAngles[1] < -DEAD_ZONE) {
                             imageY.setColorFilter(imageY.getContext().getResources().getColor(R.color.axisDefault), PorterDuff.Mode.SRC_ATOP);
                             imageMinusY.setColorFilter(imageMinusY.getContext().getResources().getColor(R.color.axisHighlight), PorterDuff.Mode.SRC_ATOP);
                         } else {
@@ -333,10 +338,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                             imageMinusY.setColorFilter(imageMinusY.getContext().getResources().getColor(R.color.axisDefault), PorterDuff.Mode.SRC_ATOP);
                         }
 
-                        if (validatedAngles[2] > 1) {
+                        if (validatedAngles[0] > DEAD_ZONE) {
                             imageZ.setColorFilter(imageZ.getContext().getResources().getColor(R.color.axisHighlight), PorterDuff.Mode.SRC_ATOP);
                             imageMinusZ.setColorFilter(imageMinusZ.getContext().getResources().getColor(R.color.axisDefault), PorterDuff.Mode.SRC_ATOP);
-                        } else if (validatedAngles[2] < -1) {
+                        } else if (validatedAngles[0] < -DEAD_ZONE) {
                             imageZ.setColorFilter(imageZ.getContext().getResources().getColor(R.color.axisDefault), PorterDuff.Mode.SRC_ATOP);
                             imageMinusZ.setColorFilter(imageMinusZ.getContext().getResources().getColor(R.color.axisHighlight), PorterDuff.Mode.SRC_ATOP);
                         } else {

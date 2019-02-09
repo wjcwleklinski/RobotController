@@ -6,6 +6,6 @@
     <color name="statusBar">#de7607</color>
     <color name="background">#e7a217</color>
     <color name="axisDefault">#000</color>
-    <color name="axisHighlight">#303f9f</color>
+    <color name="axisHighlight">#fb0a12</color>
     <color name="androidBar">#e7a217</color>
 </resources>
