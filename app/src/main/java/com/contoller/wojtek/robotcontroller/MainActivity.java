@@ -9,7 +9,6 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.nfc.Tag;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Vibrator;
@@ -17,22 +16,18 @@ import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.util.Arrays;
-
-import no.hials.crosscom.networking.CrossComClient;
-import no.hials.crosscom.networking.Request;
+/** This should be responsible only for UI in main thread */
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
@@ -54,35 +49,34 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private ImageView imageMinusX;
     private ImageView imageMinusY;
     private ImageView imageMinusZ;
+    private TextView positionA1;
+    private TextView positionA2;
+    private TextView positionA3;
+    private TextView positionA4;
+    private TextView positionA5;
+    private TextView positionA6;
 
     private SensorManager sensorManager;
 
     private final String TAG = "Main";
     private final int DEAD_ZONE = 2;
 
-    private float seekBarProgress = 1;
 
     //--------------------------------------
     private float[] mAccelerometerReading = new float[3];
     private float[] mMagnetometerReading = new float[3];
     private float[] mGyroscopeReading = new float[3];
 
-
-    private float[] mRotationMatrix = new float[9];
-    private float[] mOrientationAngles = new float[3];
-
-
-    private float[] pressedAngles = {0,0,0};
-    private float[] anglesToSend = {0,0,0};
-    private double x = 0, y = 0, z = 0, step = 1;
     private String IP;
     private int port;
-    private boolean preparedtoSend = false;
+
     float[] validatedAngles = {0,0,0};
+
 
     //--------------------------------------------------
     AngleThread angleThread;
-    Thread connectionThread;
+    Thread torqueChartThread;
+    private ChartFragment torqueChartFragment = new ChartFragment();
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -104,12 +98,53 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         initViews();
         sensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
 
+        // prepare fragments
+        Bundle args = new Bundle();
+        args.putInt("Id", R.id.torque_graph);
+        args.putIntArray("TextViewIds", new int[]{R.id.text_view_torque_A1, R.id.text_view_torque_A2,
+                R.id.text_view_torque_A3, R.id.text_view_torque_A4, R.id.text_view_torque_A5, R.id.text_view_torque_A6});
+        args.putString("unit", " Nm");
+        torqueChartFragment.setArguments(args);
 
+
+
+        //todo detach
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.chart_container, torqueChartFragment)
+                .hide(torqueChartFragment)
+                .commit();
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                Log.i("Options menu", "Settings selected");
+                return true;
+            case R.id.show_torque_chart:
+                getSupportFragmentManager().beginTransaction()
+                        .show(torqueChartFragment)
+                        .commit();
+                return true;
+            case R.id.hide_torque_chart:
+                getSupportFragmentManager().beginTransaction()
+                        .hide(torqueChartFragment)
+                        .commit();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+
+        @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void onResume() {
         super.onResume();
@@ -119,29 +154,30 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         /* Registering sensors */
         Sensor accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
         if(accelerometer != null) {
-            sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_UI);
+            sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         } else {
             Log.i(TAG, "Accelerometer not available.");
         }
 
         Sensor magnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         if(magnetometer != null) {
-            sensorManager.registerListener(this, magnetometer, SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_UI);
+            sensorManager.registerListener(this, magnetometer, SensorManager.SENSOR_DELAY_NORMAL);
         } else {
             Log.i(TAG, "Magnetometer not available.");
         }
 
         Sensor gyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         if(gyroscope != null) {
-            sensorManager.registerListener(this, gyroscope, SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_UI);
+            sensorManager.registerListener(this, gyroscope, SensorManager.SENSOR_DELAY_NORMAL);
         } else {
             Log.i(TAG, "Gyroscope not available.");
         }
 
-        angleThread = new AngleThread(sensorManager, IP, port);
+        angleThread = new AngleThread("Angle Thread", sensorManager, IP, port);
         angleThread.start();
-        //connectionThread = new Thread(new KukaThread(IP, Port));
-        //connectionThread.start();
+
+        torqueChartThread = new Thread(torqueChartFragment);
+        //torqueChartThread.start();
         refreshUI();
 
 
@@ -152,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         super.onPause();
         sensorManager.unregisterListener(this);
         angleThread.interrupt();
-        //connectionThread.interrupt();
+        torqueChartThread.interrupt();
     }
 
     /**
@@ -197,6 +233,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         aberrationX = findViewById(R.id.aberrationX);
         aberrationY = findViewById(R.id.aberrationY);
         aberrationZ = findViewById(R.id.aberrationZ);
+        positionA1 = findViewById(R.id.textView_position_A1);
+        positionA2 = findViewById(R.id.textView_position_A2);
+        positionA3 = findViewById(R.id.textView_position_A3);
+        positionA4 = findViewById(R.id.textView_position_A4);
+        positionA5 = findViewById(R.id.textView_position_A5);
+        positionA6 = findViewById(R.id.textView_position_A6);
         jogButton = findViewById(R.id.jogButton);
         jogButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -207,9 +249,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 if(event.getAction()==MotionEvent.ACTION_DOWN) {
                     Log.i(TAG, "Action down.");
 
-                    pressedAngles = angleThread.getFilteredAngles();
                     angleThread.setJogButtonPressed(true);
-                    //angleThread.setPressedAngles(pressedAngles);
                     vibrator.vibrate(200);
 
                 }
@@ -235,9 +275,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         imageMinusY = findViewById(R.id.imageMinusY);
         imageMinusZ = findViewById(R.id.imageMinusZ);
 
-        seekBar.setProgress(1);
+        seekBar.setProgress(50);
         seekBar.setMax(100);
-        seekBarTextView.setText(String.valueOf(1));
+        seekBarTextView.setText(String.valueOf(50));
 
         checkBoxX.setChecked(false);
         checkBoxY.setChecked(false);
@@ -295,12 +335,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     }
 
-
     private void refreshUI() {
         final Handler handler = new Handler();
+
         handler.post(new Runnable() {
             @Override
             public void run() {
+                //Log.i("UI Thread", Thread.currentThread().getName());
                     try {
                         angleX.setText(String.valueOf(Math.round(Math.toDegrees(angleThread.getFilteredAngles()[2]))));
                         angleY.setText(String.valueOf(Math.round(Math.toDegrees(angleThread.getFilteredAngles()[1]))));
@@ -348,49 +389,23 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                             imageZ.setColorFilter(imageZ.getContext().getResources().getColor(R.color.axisDefault), PorterDuff.Mode.SRC_ATOP);
                             imageMinusZ.setColorFilter(imageMinusZ.getContext().getResources().getColor(R.color.axisDefault), PorterDuff.Mode.SRC_ATOP);
                         }
+                        torqueChartFragment.setMeasurements(angleThread.getTorques());
+                        positionA1.setText("A1:\n" + String.format("%.2f", angleThread.getActualAxisAngles()[0]) + " deg");
+                        positionA2.setText("A2:\n" + String.format("%.2f", angleThread.getActualAxisAngles()[1]) + " deg");
+                        positionA3.setText("A3:\n" + String.format("%.2f", angleThread.getActualAxisAngles()[2]) + " deg");
+                        positionA4.setText("A4:\n" + String.format("%.2f", angleThread.getActualAxisAngles()[3]) + " deg");
+                        positionA5.setText("A5:\n" + String.format("%.2f", angleThread.getActualAxisAngles()[4]) + " deg");
+                        positionA6.setText("A6:\n" + String.format("%.2f", angleThread.getActualAxisAngles()[5]) + " deg");
+
                     } catch (Exception ex) {
                         Log.i("RefreshUI", "Exception in refreshUI.");
                     }
-                    handler.postDelayed(this, 200);
+                    handler.postDelayed(this, 300);
             }
         });
     }
 
-    public class KukaThread implements Runnable {
 
-        private String IP;
-        private int port;
-        public KukaThread(String IP, int port) {
-            this.IP = IP;
-            this.port = port;
 
-        }
-
-        @Override
-        public void run() {
-            CrossComClient client = null;
-
-            try {
-
-                while(!Thread.interrupted()) {
-                    if (preparedtoSend) {
-                        client = new CrossComClient(IP, port);
-                        client.sendRequest(new Request(1, "MYPOS", "{X " + x + ",Y " + y + ",Z " + z + "}"));
-                        Log.i("KukaThread", "MYPOS: " + "{X " + x + ",Y " + y + ",Z " + z + "}");
-                        client.sendRequest(new Request(0, "$OV_PRO", String.valueOf(seekBar.getProgress())));
-                        Log.i("KukaThread", "$OV_PRO" + String.valueOf(seekBar.getProgress()));
-                    }
-                }
-            } catch (Exception ex) {
-                Log.i("KukaThread", "Unable to connect or send request.");
-            } finally {
-                try {
-                    client.close();
-                } catch (Exception ex) {
-                    Log.i("KukaThread", "Unable to close client.");
-                }
-            }
-        }
-    }
 
 }

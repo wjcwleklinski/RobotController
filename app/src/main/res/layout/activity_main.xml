@@ -20,19 +20,6 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/labelx2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="28dp"
-        android:layout_marginStart="28dp"
-        android:layout_marginTop="130dp"
-        android:text="Angle X:"
-        android:textSize="15sp"
-        app:layout_constraintStart_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
         android:id="@+id/labely"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -45,18 +32,6 @@
         app:layout_constraintTop_toBottomOf="@+id/labelx" />
 
     <TextView
-        android:id="@+id/labely2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="28dp"
-        android:layout_marginStart="28dp"
-        android:layout_marginTop="10dp"
-        android:text="Angle Y:"
-        android:textSize="15sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/labelx2" />
-
-    <TextView
         android:id="@+id/labelz"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -67,18 +42,6 @@
         android:textSize="15sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/labely" />
-
-    <TextView
-        android:id="@+id/labelz2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="28dp"
-        android:layout_marginStart="28dp"
-        android:layout_marginTop="10dp"
-        android:text="Angle Z:"
-        android:textSize="15sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/labely2" />
 
     <TextView
         android:id="@+id/angleX"
@@ -120,90 +83,87 @@
         android:id="@+id/aberrationX"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="32dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="130dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="122dp"
         android:text="0,0"
-        android:textSize="15sp"
-        app:layout_constraintStart_toEndOf="@+id/labelx2"
+        android:textSize="18sp"
+        app:layout_constraintStart_toEndOf="@+id/checkBoxX"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/aberrationY"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="32dp"
-        android:layout_marginStart="32dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginLeft="30dp"
         android:layout_marginTop="10dp"
         android:text="0,0"
-        android:textSize="15sp"
-        app:layout_constraintStart_toEndOf="@+id/labely2"
+        android:textSize="18sp"
+        app:layout_constraintStart_toEndOf="@+id/checkBoxY"
         app:layout_constraintTop_toBottomOf="@+id/aberrationX" />
 
     <TextView
         android:id="@+id/aberrationZ"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="32dp"
-        android:layout_marginStart="32dp"
+        android:layout_marginStart="30dp"
         android:layout_marginTop="10dp"
         android:text="0,0"
-        android:textSize="15sp"
-        app:layout_constraintStart_toEndOf="@+id/labelz2"
-        app:layout_constraintTop_toBottomOf="@+id/aberrationY" />
+        android:textSize="18sp"
+        app:layout_constraintStart_toEndOf="@+id/checkBoxZ"
+        app:layout_constraintTop_toBottomOf="@+id/aberrationY"
+        android:layout_marginLeft="30dp" />
 
     <Button
         android:id="@+id/jogButton"
-        android:layout_width="250dp"
-        android:layout_height="250dp"
-        android:layout_marginTop="50dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginRight="10dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:layout_marginBottom="50dp"
+        android:layout_marginEnd="20dp"
         android:background="@drawable/roundbtn"
         android:text="Start Jogging"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        android:layout_marginRight="20dp" />
 
     <CheckBox
         android:id="@+id/checkBoxX"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="28dp"
         android:layout_marginStart="28dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="27dp"
         android:checked="false"
         android:tag="x"
         android:text="X"
         android:textColorLink="@color/colorAccent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/labelz2" />
+        app:layout_constraintTop_toBottomOf="@+id/labelz"
+        android:layout_marginLeft="28dp" />
 
     <CheckBox
         android:id="@+id/checkBoxY"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="24dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginLeft="28dp"
+        android:layout_marginTop="2dp"
         android:tag="y"
         android:text="Y"
-        app:layout_constraintStart_toEndOf="@+id/checkBoxX"
-        app:layout_constraintTop_toBottomOf="@+id/labelz2" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/checkBoxX" />
 
     <CheckBox
         android:id="@+id/checkBoxZ"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="24dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginLeft="28dp"
+        android:layout_marginTop="2dp"
         android:tag="z"
         android:text="Z"
-        app:layout_constraintStart_toEndOf="@+id/checkBoxY"
-        app:layout_constraintTop_toBottomOf="@+id/aberrationZ" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/checkBoxY" />
 
     <SeekBar
         android:id="@+id/seekBar"
@@ -211,17 +171,17 @@
         android:layout_height="25dp"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="104dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/checkBoxZ" />
+        app:layout_constraintTop_toBottomOf="@+id/imageY" />
 
     <TextView
         android:id="@+id/seekBarTextView"
         android:layout_width="76dp"
         android:layout_height="25dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginLeft="24dp"
-        android:layout_marginTop="21dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="104dp"
         android:textSize="20sp"
         app:layout_constraintStart_toEndOf="@+id/seekBar"
         app:layout_constraintTop_toBottomOf="@+id/checkBoxY" />
@@ -289,5 +249,90 @@
         app:layout_constraintTop_toBottomOf="@+id/imageZ"
         app:srcCompat="@drawable/lepszycenter" />
 
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/chart_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="200dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginRight="200dp"
+        />
 
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="16dp"
+        android:text="Current position"
+        app:layout_constraintStart_toEndOf="@+id/imageMinusY"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginLeft="50dp" />
+
+    <TextView
+        android:id="@+id/textView_position_A1"
+        android:layout_width="70dp"
+        android:layout_height="38dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="2dp"
+        android:text="A1:\n0 deg"
+        app:layout_constraintStart_toEndOf="@+id/imageMinusY"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        android:layout_marginLeft="50dp" />
+
+    <TextView
+        android:id="@+id/textView_position_A2"
+        android:layout_width="70dp"
+        android:layout_height="38dp"
+        android:layout_marginStart="125dp"
+        android:layout_marginTop="2dp"
+        android:text="A2:\n0 deg"
+        app:layout_constraintStart_toEndOf="@+id/imageMinusY"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        android:layout_marginLeft="50dp" />
+
+    <TextView
+        android:id="@+id/textView_position_A3"
+        android:layout_width="70dp"
+        android:layout_height="38dp"
+        android:layout_marginStart="200dp"
+        android:layout_marginTop="2dp"
+        android:text="A3:\n0 deg"
+        app:layout_constraintStart_toEndOf="@+id/imageMinusY"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        android:layout_marginLeft="50dp" />
+
+    <TextView
+        android:id="@+id/textView_position_A4"
+        android:layout_width="70dp"
+        android:layout_height="38dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="40dp"
+        android:text="A4:\n0 deg"
+        app:layout_constraintStart_toEndOf="@+id/imageMinusY"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        android:layout_marginLeft="50dp" />
+
+    <TextView
+        android:id="@+id/textView_position_A5"
+        android:layout_width="70dp"
+        android:layout_height="38dp"
+        android:layout_marginStart="125dp"
+        android:layout_marginTop="40dp"
+        android:text="A5:\n0 deg"
+        app:layout_constraintStart_toEndOf="@+id/imageMinusY"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        android:layout_marginLeft="50dp" />
+
+    <TextView
+        android:id="@+id/textView_position_A6"
+        android:layout_width="70dp"
+        android:layout_height="38dp"
+        android:layout_marginStart="200dp"
+        android:layout_marginTop="40dp"
+        android:text="A6:\n0 deg"
+        app:layout_constraintStart_toEndOf="@+id/imageMinusY"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        android:layout_marginLeft="50dp" />
 </android.support.constraint.ConstraintLayout>

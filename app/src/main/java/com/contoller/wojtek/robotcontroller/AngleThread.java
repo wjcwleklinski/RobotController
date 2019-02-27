@@ -1,15 +1,25 @@
 package com.contoller.wojtek.robotcontroller;
 
 import android.hardware.SensorManager;
-
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
 
 import java.io.IOException;
 import java.util.Arrays;
 
-import no.hials.crosscom.networking.CrossComClient;
-import no.hials.crosscom.networking.Request;
+import no.hials.crosscom.CrossComClient;
+import no.hials.crosscom.Callback;
+import no.hials.crosscom.KRL.KRLVariable;
+import no.hials.crosscom.KRL.structs.KRLPos;
+import no.hials.crosscom.Request;
 
+/** This should be responsible for math processing and heavy lifting
+ * Helper class with separate thread only to communicate with kuka would be much cleaner*/
 public class AngleThread extends Thread {
 
     private final int BUFFER_SIZE = 10;
@@ -47,14 +57,18 @@ public class AngleThread extends Thread {
 
     private boolean xCheckboxState = false, yCheckboxState = false, zCheckboxState = false;
     private boolean jogButtonPressed = false;
-    private double x = 0, y = 0, z = 0, step = 1;
+    private double x = 0, y = 0, z = 0, step = 3;
     public boolean angleThreadReady = false;
     private String IP;
     private int port;
     private int seekbarProgress = 1;
+    private KalmanFilter kalmanFilter = new KalmanFilter();
+    private double[] actualTorques = new double[6];
+    double[] actualAxisAngles = new double[6];
 
 
-    public AngleThread(SensorManager sensorManager, String IP, int port) {
+    public AngleThread(String name, SensorManager sensorManager, String IP, int port) {
+        super(name);
         this.threadSensorManager = sensorManager;
         this.IP = IP;
         this.port = port;
@@ -64,35 +78,35 @@ public class AngleThread extends Thread {
 
     public void setAccReading(float[] accReading) {
         this.accReading = accReading;
-        System.arraycopy(accXBuffer, 1, accXBuffer, 0, BUFFER_SIZE - 1);
+        /*System.arraycopy(accXBuffer, 1, accXBuffer, 0, BUFFER_SIZE - 1);
         System.arraycopy(accYBuffer, 1, accYBuffer, 0, BUFFER_SIZE - 1);
         System.arraycopy(accZBuffer, 1, accZBuffer, 0, BUFFER_SIZE - 1);
 
         accXBuffer[BUFFER_SIZE - 1] = accReading[2];
         accYBuffer[BUFFER_SIZE - 1] = accReading[1];
-        accZBuffer[BUFFER_SIZE - 1] = accReading[0];
+        accZBuffer[BUFFER_SIZE - 1] = accReading[0];*/
     }
 
     public void setGyroReading(float[] gyroReading) {
         this.gyroReading = gyroReading;
-        System.arraycopy(gyroXBuffer, 1, gyroXBuffer, 0, BUFFER_SIZE - 1);
+        /*System.arraycopy(gyroXBuffer, 1, gyroXBuffer, 0, BUFFER_SIZE - 1);
         System.arraycopy(gyroYBuffer, 1, gyroYBuffer, 0, BUFFER_SIZE - 1);
         System.arraycopy(gyroZBuffer, 1, gyroZBuffer, 0, BUFFER_SIZE - 1);
 
         gyroXBuffer[BUFFER_SIZE - 1] = gyroReading[2];
         gyroYBuffer[BUFFER_SIZE - 1] = gyroReading[1];
-        gyroZBuffer[BUFFER_SIZE - 1] = gyroReading[0];
+        gyroZBuffer[BUFFER_SIZE - 1] = gyroReading[0];*/
     }
 
     public void setMagnetReading(float[] magnetReading) {
         this.magnetReading = magnetReading;
-        System.arraycopy(magnetXBuffer, 1, magnetXBuffer, 0, BUFFER_SIZE - 1);
+        /*System.arraycopy(magnetXBuffer, 1, magnetXBuffer, 0, BUFFER_SIZE - 1);
         System.arraycopy(magnetYBuffer, 1, magnetYBuffer, 0, BUFFER_SIZE - 1);
         System.arraycopy(magnetZBuffer, 1, magnetZBuffer, 0, BUFFER_SIZE - 1);
 
         magnetXBuffer[BUFFER_SIZE - 1] = magnetReading[2];
         magnetYBuffer[BUFFER_SIZE - 1] = magnetReading[1];
-        magnetZBuffer[BUFFER_SIZE - 1] = magnetReading[0];
+        magnetZBuffer[BUFFER_SIZE - 1] = magnetReading[0];*/
     }
 
     public float[] getFilteredAngles() { return  filteredAngles; }
@@ -100,6 +114,10 @@ public class AngleThread extends Thread {
     public float[] getValidatedAngles() { return  validatedAngles; }
 
     public float[] getRawAngles() { return  rawAngles; }
+
+    public double[] getTorques() { return  actualTorques; }
+
+    public double[] getActualAxisAngles() { return actualAxisAngles; }
 
     public void setXCheckboxState(boolean xCheckbox) {
         this.xCheckboxState = xCheckbox;
@@ -125,25 +143,27 @@ public class AngleThread extends Thread {
 
     public void setSeekbarProgress(int inSeekbarProgress) {this.seekbarProgress = inSeekbarProgress;}
 
+
     public void run() {
         CrossComClient client = null;
+
         Log.i("AngleThread", "AngleThread started");
         try {
-            client = new CrossComClient(IP, port);
+            client = new CrossComClient("192.168.1.155", 7000);
             Log.i("Kuka connection", "Client created");
         } catch(IOException ex) {
             Log.i("Kuka connection", "Unable to create client");
+            Log.i("Kuka connection", ex.getMessage());
+            ex.printStackTrace();
         }
 
         while(!Thread.currentThread().isInterrupted()) {
-
             try {
-                SensorManager.getRotationMatrix(utilRotationMatrix, gyroReading, accReading, magnetReading); //null instead of gyro?
+                /*SensorManager.getRotationMatrix(utilRotationMatrix, gyroReading, accReading, magnetReading); //null instead of gyro?
                 SensorManager.getOrientation(utilRotationMatrix, utilOrientationAngles);
-                filteredAngles = filter.movingAverage(utilOrientationAngles);
-                rawAngles = utilOrientationAngles;
-                //Log.i("Pressed angles: ", Arrays.toString(pressedAngles));
-                //Log.i("Filtered angles: ", Arrays.toString(filteredAngles));
+                filteredAngles = filter.movingAverage(utilOrientationAngles);*/
+                filteredAngles = filter.movingAverage(kalmanFilter.computeAngles(accReading, gyroReading, magnetReading));
+                rawAngles = utilOrientationAngles; //utils are commented
 
                 if (jogButtonPressed) {
                     if (xCheckboxState)
@@ -163,7 +183,6 @@ public class AngleThread extends Thread {
                     validatedAngles[1] = 0;
                     validatedAngles[2] = 0;
                 }
-                //Log.i("Validated angles: ", Arrays.toString(validatedAngles));
 
                 long roundedX = Math.round(Math.toDegrees(validatedAngles[2]));
                 long roundedY = Math.round(Math.toDegrees(validatedAngles[1]));
@@ -192,26 +211,24 @@ public class AngleThread extends Thread {
                     z = 0;
                 }
                 angleThreadReady = true;
-                //Log.i("Kuka connection", "MYPOS: " + "{X " + x + ",Y " + y + ",Z " + z + "}");
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
             try {
-                client.sendRequest(new Request(1, "MYPOS", "{X " + x + ",Y " + y + ",Z " + z + "}"));
-                Log.i("Kuka connection", "MYPOS: " + "{X " + x + ",Y " + y + ",Z " + z + "}");
-                client.sendRequest(new Request(0, "$OV_PRO", String.valueOf(seekbarProgress)));
-                Log.i("Kuka connection", "$OV_PRO" + String.valueOf(seekbarProgress));
-
+                //actualTorques = new double[]{1,2,3,4,5,6};
+                if(client!=null) {
+                    //client.sendRequest(new Request(1, "MYPOS", "{X " + x + ",Y " + y + ",Z " + z + "}"));
+                    KRLPos pos = (KRLPos) new KRLPos("MYPOS").setX(x).setY(y).setZ(z);  //MYPOS is defined manually in $config.dat
+                    client.writeVariable(pos);
+                    //Log.i("Kuka connection", "MYPOS: " + "{X " + x + ",Y " + y + ",Z " + z + "}");
+                    client.sendRequest(new Request(0, "$OV_PRO", String.valueOf(seekbarProgress)));
+                    actualTorques = client.readJointTorques(); // CHECK THIS - WILD VALS
+                    actualAxisAngles = client.readJointAngles();
+                }
             } catch (Exception ex) {
                 Log.i("Kuka connection: ", "Unable to send request");
-            } /*finally {
-                try {
-                    client.close();
-                } catch (Exception ex) {
-                    Log.i("Kuka connection", "Unable to close client");
-                }
-            }*/
+            }
         }
         try {
             client.close();
@@ -246,12 +263,11 @@ public class AngleThread extends Thread {
         Arrays.fill(rawAngles, 0);
 
         Arrays.fill(pressedAngles, 0);
+
+        Arrays.fill(actualAxisAngles, 0);
+        Arrays.fill(actualTorques, 0);
     }
 
-    private void bufferizeAngles(float[] inAngles) {
-        System.arraycopy(angleXBuffer, 1, angleXBuffer, 0, BUFFER_SIZE - 1);
-
-    }
 
     private float[] movingAverage(float[] xBuffer, float[] yBuffer, float[] zBuffer) {
 
@@ -269,5 +285,7 @@ public class AngleThread extends Thread {
 
         return filteredAngles;
     }
+
+
 
 }

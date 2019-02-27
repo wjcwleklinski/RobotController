@@ -1,5 +1,6 @@
 package com.contoller.wojtek.robotcontroller;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.wifi.WifiInfo;
@@ -19,6 +20,7 @@ public class MenuActivity extends Activity {
     EditText editTextIP;
     EditText editTextPort;
 
+    @SuppressLint("SetTextI18n")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
@@ -26,7 +28,7 @@ public class MenuActivity extends Activity {
         editTextPort = findViewById(R.id.editTextPort);
         WifiManager wifiManager = (WifiManager)getApplicationContext().getSystemService(WIFI_SERVICE);
         String proposedIP = null;
-        try {
+        /*try {
             WifiInfo wifiInfo = wifiManager.getConnectionInfo();
             int ip = wifiInfo.getIpAddress();
             byte[] ipByteArray = BigInteger.valueOf(ip).toByteArray();
@@ -34,7 +36,9 @@ public class MenuActivity extends Activity {
             editTextIP.setText(proposedIP);
         } catch (Exception ex) {
             Log.i("MenuActivity", "Unable to get wifi info.");
-        }
+        }*/
+        editTextIP.setText("192.168.1.155");
+        editTextPort.setText(7000+"");
     }
 
     public void onConnect(View view) {

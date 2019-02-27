@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="#000">
+
+    <com.androidplot.xy.XYPlot
+        style="@style/APDefacto.Dark"
+        android:id="@+id/torque_graph"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="40dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:lineLabels="left"
+        app:paddingBottom="0dp"
+        app:paddingLeft="10dp"
+        app:paddingRight="10dp"
+        app:paddingTop="40dp"
+        app:rangeTitle="Nm"
+        app:title="Torques"
+        />
+
+    <TextView
+        android:id="@+id/text_view_torque_A1"
+        android:layout_width="70dp"
+        android:layout_height="38dp"
+        android:layout_marginBottom="2dp"
+        android:textColor="#fff"
+        android:text="A1:\n15.5 Nm"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/text_view_torque_A2"
+        android:layout_width="70dp"
+        android:layout_height="38dp"
+        android:layout_marginBottom="2dp"
+        android:layout_marginLeft="75dp"
+        android:textColor="#fff"
+        android:text="A2:\n15.5 Nm"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/text_view_torque_A3"
+        android:layout_width="70dp"
+        android:layout_height="38dp"
+        android:layout_marginBottom="2dp"
+        android:layout_marginLeft="150dp"
+        android:textColor="#fff"
+        android:text="A3:\n15.5 Nm"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/text_view_torque_A4"
+        android:layout_width="70dp"
+        android:layout_height="38dp"
+        android:layout_marginBottom="2dp"
+        android:layout_marginLeft="225dp"
+        android:textColor="#fff"
+        android:text="A4:\n15.5 Nm"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/text_view_torque_A5"
+        android:layout_width="70dp"
+        android:layout_height="38dp"
+        android:layout_marginBottom="2dp"
+        android:layout_marginLeft="300dp"
+        android:textColor="#fff"
+        android:text="A5:\n15.5 Nm"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/text_view_torque_A6"
+        android:layout_width="70dp"
+        android:layout_height="38dp"
+        android:layout_marginBottom="2dp"
+        android:layout_marginLeft="375dp"
+        android:textColor="#fff"
+        android:text="A6:\n15.5 Nm"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+
+</android.support.constraint.ConstraintLayout>
