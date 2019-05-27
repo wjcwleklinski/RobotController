@@ -2,7 +2,6 @@ package com.contoller.wojtek.robotcontroller;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -12,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.androidplot.xy.LineAndPointFormatter;
-import com.androidplot.xy.NormedXYSeries;
 import com.androidplot.xy.SimpleXYSeries;
 import com.androidplot.xy.XYPlot;
 import com.androidplot.xy.XYSeries;
@@ -20,12 +18,12 @@ import com.androidplot.xy.XYSeries;
 import java.util.Arrays;
 
 
-public class ChartFragment extends Fragment implements Runnable {
+public class ChartFragment extends Fragment {
 
 
     private int fragmentId;
     private XYPlot graph;
-    private double[] measurements = new double[6];
+    //private double[] measurements = new double[6];
     private Number[] seriesA1 = new Number[20];
     private Number[] seriesA2 = new Number[20];
     private Number[] seriesA3 = new Number[20];
@@ -62,7 +60,7 @@ public class ChartFragment extends Fragment implements Runnable {
     }
 
     public void setMeasurements(double[] measurements) {
-        this.measurements = measurements;
+        //this.measurements = measurements;
         //Log.i("Co przychodzi:", Thread.currentThread().getName()+ "  " + Arrays.toString(measurements));
         A1.setText("A1:\n" + String.format("%.2f", measurements[0]) + unit);
         A2.setText("A2:\n" + String.format("%.2f", measurements[1]) + unit);
@@ -118,25 +116,6 @@ public class ChartFragment extends Fragment implements Runnable {
         graph.redraw();
 
     }
-    @Override
-    public void run() {
-        while(!Thread.interrupted()) {
-
-                System.arraycopy(seriesA1, 1, seriesA1, 0, (seriesA1.length) - 1);
-                seriesA1[(seriesA1.length) - 1] = measurements[0];
-                XYSeries torquesA1 = new SimpleXYSeries(Arrays.asList(seriesA1),
-                        SimpleXYSeries.ArrayFormat.Y_VALS_ONLY, "A1");
-                LineAndPointFormatter torquesA1Format = new LineAndPointFormatter(Color.RED, Color.GREEN, null, null);
-                graph.clear();
-
-                graph.addSeries(torquesA1, torquesA1Format);
-                graph.redraw();
-
-            }
-
-
-        }
-
 
     public void initSeries() {
         Arrays.fill(seriesA1, 0.);

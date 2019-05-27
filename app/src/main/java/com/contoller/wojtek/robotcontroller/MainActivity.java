@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     private final String TAG = "Main";
     private final int DEAD_ZONE = 2;
-
+    private final char DEGREE_UNICODE = 0x00B0;
 
     //--------------------------------------
     private float[] mAccelerometerReading = new float[3];
@@ -72,10 +72,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     float[] validatedAngles = {0,0,0};
 
-
     //--------------------------------------------------
-    AngleThread angleThread;
-    Thread torqueChartThread;
+    private AngleThread angleThread;
     private ChartFragment torqueChartFragment = new ChartFragment();
 
     @SuppressLint("ClickableViewAccessibility")
@@ -85,8 +83,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         /* hide actionBar, fullscreen commented */
         getSupportActionBar().hide();
-        //getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-        //        WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.activity_main);
         /* getting ip and port from menu activity */
@@ -152,32 +148,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
 
         /* Registering sensors */
-        Sensor accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
-        if(accelerometer != null) {
-            sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
-        } else {
-            Log.i(TAG, "Accelerometer not available.");
-        }
+        registerSensor(Sensor.TYPE_GRAVITY, SensorManager.SENSOR_DELAY_NORMAL);
+        registerSensor(Sensor.TYPE_MAGNETIC_FIELD, SensorManager.SENSOR_DELAY_NORMAL);
+        registerSensor(Sensor.TYPE_GYROSCOPE, SensorManager.SENSOR_DELAY_NORMAL);
 
-        Sensor magnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-        if(magnetometer != null) {
-            sensorManager.registerListener(this, magnetometer, SensorManager.SENSOR_DELAY_NORMAL);
-        } else {
-            Log.i(TAG, "Magnetometer not available.");
-        }
-
-        Sensor gyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-        if(gyroscope != null) {
-            sensorManager.registerListener(this, gyroscope, SensorManager.SENSOR_DELAY_NORMAL);
-        } else {
-            Log.i(TAG, "Gyroscope not available.");
-        }
 
         angleThread = new AngleThread("Angle Thread", sensorManager, IP, port);
         angleThread.start();
 
-        torqueChartThread = new Thread(torqueChartFragment);
-        //torqueChartThread.start();
         refreshUI();
 
 
@@ -188,13 +166,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         super.onPause();
         sensorManager.unregisterListener(this);
         angleThread.interrupt();
-        torqueChartThread.interrupt();
     }
 
-    /**
-     * SensorEventListener interface method
-     * @param sensorEvent
-     */
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
 
@@ -221,6 +194,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
         Log.i("Info", "Accuracy changed.");
+    }
+
+    private void registerSensor(int type, int delay) {
+        Sensor sensor = sensorManager.getDefaultSensor(type);
+        if(sensor != null) {
+            sensorManager.registerListener(this, sensor, delay);
+        } else {
+            Log.i("Null: ", "Sensor unregistered");
+        }
     }
 
     /**
@@ -343,12 +325,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             public void run() {
                 //Log.i("UI Thread", Thread.currentThread().getName());
                     try {
+                        // displaying raw angles
                         angleX.setText(String.valueOf(Math.round(Math.toDegrees(angleThread.getFilteredAngles()[2]))));
                         angleY.setText(String.valueOf(Math.round(Math.toDegrees(angleThread.getFilteredAngles()[1]))));
                         angleZ.setText(String.valueOf(Math.round(Math.toDegrees(angleThread.getFilteredAngles()[0]))));
 
-                        //validatedAngles = angleThread.getValidatedAngles(); //cant do that - synchro issues
-
+                        // displaying validated angles
                         validatedAngles[0] = Math.round(Math.toDegrees(angleThread.getValidatedAngles()[0]));
                         validatedAngles[1] = Math.round(Math.toDegrees(angleThread.getValidatedAngles()[1]));
                         validatedAngles[2] = Math.round(Math.toDegrees(angleThread.getValidatedAngles()[2]));
@@ -357,6 +339,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         aberrationY.setText(String.valueOf(validatedAngles[1]));
                         aberrationZ.setText(String.valueOf(validatedAngles[0]));
 
+                        // changing arrows color
                         if (validatedAngles[2] > DEAD_ZONE) {
                             imageX.setColorFilter(imageX.getContext().getResources().getColor(R.color.axisHighlight), PorterDuff.Mode.SRC_ATOP);
                             imageMinusX.setColorFilter(imageMinusX.getContext().getResources().getColor(R.color.axisDefault), PorterDuff.Mode.SRC_ATOP);
@@ -389,13 +372,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                             imageZ.setColorFilter(imageZ.getContext().getResources().getColor(R.color.axisDefault), PorterDuff.Mode.SRC_ATOP);
                             imageMinusZ.setColorFilter(imageMinusZ.getContext().getResources().getColor(R.color.axisDefault), PorterDuff.Mode.SRC_ATOP);
                         }
+
+                        // updating torque chart and its textViews
                         torqueChartFragment.setMeasurements(angleThread.getTorques());
-                        positionA1.setText("A1:\n" + String.format("%.2f", angleThread.getActualAxisAngles()[0]) + " deg");
-                        positionA2.setText("A2:\n" + String.format("%.2f", angleThread.getActualAxisAngles()[1]) + " deg");
-                        positionA3.setText("A3:\n" + String.format("%.2f", angleThread.getActualAxisAngles()[2]) + " deg");
-                        positionA4.setText("A4:\n" + String.format("%.2f", angleThread.getActualAxisAngles()[3]) + " deg");
-                        positionA5.setText("A5:\n" + String.format("%.2f", angleThread.getActualAxisAngles()[4]) + " deg");
-                        positionA6.setText("A6:\n" + String.format("%.2f", angleThread.getActualAxisAngles()[5]) + " deg");
+                        positionA1.setText("A1:\n" + String.format("%.2f", angleThread.getActualAxisAngles()[0]) + " " + DEGREE_UNICODE);
+                        positionA2.setText("A2:\n" + String.format("%.2f", angleThread.getActualAxisAngles()[1]) + " " + DEGREE_UNICODE);
+                        positionA3.setText("A3:\n" + String.format("%.2f", angleThread.getActualAxisAngles()[2]) + " " + DEGREE_UNICODE);
+                        positionA4.setText("A4:\n" + String.format("%.2f", angleThread.getActualAxisAngles()[3]) + " " + DEGREE_UNICODE);
+                        positionA5.setText("A5:\n" + String.format("%.2f", angleThread.getActualAxisAngles()[4]) + " " + DEGREE_UNICODE);
+                        positionA6.setText("A6:\n" + String.format("%.2f", angleThread.getActualAxisAngles()[5]) + " " + DEGREE_UNICODE);
 
                     } catch (Exception ex) {
                         Log.i("RefreshUI", "Exception in refreshUI.");

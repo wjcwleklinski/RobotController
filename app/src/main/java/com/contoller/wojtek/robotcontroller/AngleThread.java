@@ -22,25 +22,11 @@ import no.hials.crosscom.Request;
  * Helper class with separate thread only to communicate with kuka would be much cleaner*/
 public class AngleThread extends Thread {
 
-    private final int BUFFER_SIZE = 10;
     private final int AXIS_COUNT = 3;
     private final int DEAD_ZONE = 2;
 
     private float[] utilRotationMatrix = new float[9];
     private float[] utilOrientationAngles = new float[3];
-
-    private float[] accXBuffer = new float[BUFFER_SIZE];
-    private float[] accYBuffer = new float[BUFFER_SIZE];
-    private float[] accZBuffer = new float[BUFFER_SIZE];
-    private float[] gyroXBuffer = new float[BUFFER_SIZE];
-    private float[] gyroYBuffer = new float[BUFFER_SIZE];
-    private float[] gyroZBuffer = new float[BUFFER_SIZE];
-    private float[] magnetXBuffer = new float[BUFFER_SIZE];
-    private float[] magnetYBuffer = new float[BUFFER_SIZE];
-    private float[] magnetZBuffer = new float[BUFFER_SIZE];
-    private float[] angleXBuffer = new float[BUFFER_SIZE];
-    private float[] angleYBuffer = new float[BUFFER_SIZE];
-    private float[] angleZBuffer = new float[BUFFER_SIZE];
 
     private float[] accReading = new float[AXIS_COUNT];
     private float[] gyroReading = new float[AXIS_COUNT];
@@ -57,7 +43,7 @@ public class AngleThread extends Thread {
 
     private boolean xCheckboxState = false, yCheckboxState = false, zCheckboxState = false;
     private boolean jogButtonPressed = false;
-    private double x = 0, y = 0, z = 0, step = 3;
+    private double x = 0, y = 0, z = 0, step = 1;
     public boolean angleThreadReady = false;
     private String IP;
     private int port;
@@ -78,35 +64,14 @@ public class AngleThread extends Thread {
 
     public void setAccReading(float[] accReading) {
         this.accReading = accReading;
-        /*System.arraycopy(accXBuffer, 1, accXBuffer, 0, BUFFER_SIZE - 1);
-        System.arraycopy(accYBuffer, 1, accYBuffer, 0, BUFFER_SIZE - 1);
-        System.arraycopy(accZBuffer, 1, accZBuffer, 0, BUFFER_SIZE - 1);
-
-        accXBuffer[BUFFER_SIZE - 1] = accReading[2];
-        accYBuffer[BUFFER_SIZE - 1] = accReading[1];
-        accZBuffer[BUFFER_SIZE - 1] = accReading[0];*/
     }
 
     public void setGyroReading(float[] gyroReading) {
         this.gyroReading = gyroReading;
-        /*System.arraycopy(gyroXBuffer, 1, gyroXBuffer, 0, BUFFER_SIZE - 1);
-        System.arraycopy(gyroYBuffer, 1, gyroYBuffer, 0, BUFFER_SIZE - 1);
-        System.arraycopy(gyroZBuffer, 1, gyroZBuffer, 0, BUFFER_SIZE - 1);
-
-        gyroXBuffer[BUFFER_SIZE - 1] = gyroReading[2];
-        gyroYBuffer[BUFFER_SIZE - 1] = gyroReading[1];
-        gyroZBuffer[BUFFER_SIZE - 1] = gyroReading[0];*/
     }
 
     public void setMagnetReading(float[] magnetReading) {
         this.magnetReading = magnetReading;
-        /*System.arraycopy(magnetXBuffer, 1, magnetXBuffer, 0, BUFFER_SIZE - 1);
-        System.arraycopy(magnetYBuffer, 1, magnetYBuffer, 0, BUFFER_SIZE - 1);
-        System.arraycopy(magnetZBuffer, 1, magnetZBuffer, 0, BUFFER_SIZE - 1);
-
-        magnetXBuffer[BUFFER_SIZE - 1] = magnetReading[2];
-        magnetYBuffer[BUFFER_SIZE - 1] = magnetReading[1];
-        magnetZBuffer[BUFFER_SIZE - 1] = magnetReading[0];*/
     }
 
     public float[] getFilteredAngles() { return  filteredAngles; }
@@ -149,7 +114,7 @@ public class AngleThread extends Thread {
 
         Log.i("AngleThread", "AngleThread started");
         try {
-            client = new CrossComClient("192.168.1.155", 7000);
+            client = new CrossComClient("192.168.2.210", 7000);
             Log.i("Kuka connection", "Client created");
         } catch(IOException ex) {
             Log.i("Kuka connection", "Unable to create client");
@@ -216,13 +181,9 @@ public class AngleThread extends Thread {
             }
 
             try {
-                //actualTorques = new double[]{1,2,3,4,5,6};
                 if(client!=null) {
-                    //client.sendRequest(new Request(1, "MYPOS", "{X " + x + ",Y " + y + ",Z " + z + "}"));
-                    KRLPos pos = (KRLPos) new KRLPos("MYPOS").setX(x).setY(y).setZ(z);  //MYPOS is defined manually in $config.dat
-                    client.writeVariable(pos);
-                    //Log.i("Kuka connection", "MYPOS: " + "{X " + x + ",Y " + y + ",Z " + z + "}");
-                    client.sendRequest(new Request(0, "$OV_PRO", String.valueOf(seekbarProgress)));
+                    client.sendRequest(new Request(1, "MYPOS", "{X " + x + ",Y " + y + ",Z " + z + "}"));
+                    client.sendRequest(new Request(0, "$OV_PRO", Integer.toString(seekbarProgress)));
                     actualTorques = client.readJointTorques(); // CHECK THIS - WILD VALS
                     actualAxisAngles = client.readJointAngles();
                 }
@@ -241,19 +202,6 @@ public class AngleThread extends Thread {
 
 
     private void initArrays() {
-        Arrays.fill(accXBuffer, 0);
-        Arrays.fill(accYBuffer, 0);
-        Arrays.fill(accZBuffer, 0);
-        Arrays.fill(gyroXBuffer, 0);
-        Arrays.fill(gyroYBuffer, 0);
-        Arrays.fill(gyroZBuffer, 0);
-        Arrays.fill(magnetXBuffer, 0);
-        Arrays.fill(magnetYBuffer, 0);
-        Arrays.fill(magnetZBuffer, 0);
-
-        Arrays.fill(angleXBuffer, 0);
-        Arrays.fill(angleYBuffer, 0);
-        Arrays.fill(angleZBuffer, 0);
 
         Arrays.fill(accReading, 0);
         Arrays.fill(gyroReading, 0);

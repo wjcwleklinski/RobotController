@@ -13,9 +13,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="28dp"
         android:layout_marginLeft="28dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="20dp"
         android:text="Raw X:"
-        android:textSize="15sp"
+        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -27,7 +27,7 @@
         android:layout_marginStart="28dp"
         android:layout_marginTop="10dp"
         android:text="Raw Y:"
-        android:textSize="15sp"
+        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/labelx" />
 
@@ -39,7 +39,7 @@
         android:layout_marginStart="28dp"
         android:layout_marginTop="10dp"
         android:text="Raw Z:"
-        android:textSize="15sp"
+        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/labely" />
 
@@ -47,11 +47,11 @@
         android:id="@+id/angleX"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="32dp"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="10dp"
-        android:text="0,0"
-        android:textSize="15sp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="20dp"
+        android:text="0"
+        android:textSize="18sp"
         app:layout_constraintStart_toEndOf="@+id/labelx"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -62,8 +62,8 @@
         android:layout_marginLeft="32dp"
         android:layout_marginStart="32dp"
         android:layout_marginTop="10dp"
-        android:text="0,0"
-        android:textSize="15sp"
+        android:text="0"
+        android:textSize="18sp"
         app:layout_constraintStart_toEndOf="@+id/labely"
         app:layout_constraintTop_toBottomOf="@+id/angleX" />
 
@@ -74,8 +74,8 @@
         android:layout_marginLeft="32dp"
         android:layout_marginStart="32dp"
         android:layout_marginTop="10dp"
-        android:text="0,0"
-        android:textSize="15sp"
+        android:text="0"
+        android:textSize="18sp"
         app:layout_constraintStart_toEndOf="@+id/labelz"
         app:layout_constraintTop_toBottomOf="@+id/angleY" />
 
@@ -85,11 +85,12 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
         android:layout_marginLeft="30dp"
-        android:layout_marginTop="122dp"
-        android:text="0,0"
+        android:layout_marginTop="32dp"
+        android:text="0"
         android:textSize="18sp"
         app:layout_constraintStart_toEndOf="@+id/checkBoxX"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/labelz"
+        app:layout_constraintTop_toEndOf="@id/angleZ" />
 
     <TextView
         android:id="@+id/aberrationY"
@@ -98,7 +99,7 @@
         android:layout_marginStart="30dp"
         android:layout_marginLeft="30dp"
         android:layout_marginTop="10dp"
-        android:text="0,0"
+        android:text="0"
         android:textSize="18sp"
         app:layout_constraintStart_toEndOf="@+id/checkBoxY"
         app:layout_constraintTop_toBottomOf="@+id/aberrationX" />
@@ -109,7 +110,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
         android:layout_marginTop="10dp"
-        android:text="0,0"
+        android:text="0"
         android:textSize="18sp"
         app:layout_constraintStart_toEndOf="@+id/checkBoxZ"
         app:layout_constraintTop_toBottomOf="@+id/aberrationY"
@@ -171,9 +172,9 @@
         android:layout_height="25dp"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="104dp"
+        android:layout_marginTop="100dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageY" />
+        app:layout_constraintTop_toBottomOf="@+id/imageViews_container" />
 
     <TextView
         android:id="@+id/seekBarTextView"
@@ -181,73 +182,84 @@
         android:layout_height="25dp"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="104dp"
+        android:layout_marginTop="100dp"
         android:textSize="20sp"
         app:layout_constraintStart_toEndOf="@+id/seekBar"
-        app:layout_constraintTop_toBottomOf="@+id/checkBoxY" />
+        app:layout_constraintTop_toBottomOf="@+id/imageViews_container" />
 
-    <ImageView
-        android:id="@+id/imageMinusX"
-        android:layout_width="46dp"
-        android:layout_height="83dp"
-        android:layout_marginStart="170dp"
-        android:layout_marginTop="16dp"
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/imageViews_container"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_marginStart="200dp"
+        android:layout_marginTop="50dp"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/lepszyminusx"
-        android:layout_marginLeft="170dp" />
+        android:layout_marginLeft="200dp">
+        <ImageView
+            android:id="@+id/imageMinusX"
+            android:layout_width="46dp"
+            android:layout_height="83dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/lepszyminusx"
+            android:layout_marginLeft="0dp" />
 
-    <ImageView
-        android:id="@+id/imageZ"
-        android:layout_width="34dp"
-        android:layout_height="69dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintStart_toEndOf="@+id/imageMinusX"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/lepszyz" />
+        <ImageView
+            android:id="@+id/imageZ"
+            android:layout_width="34dp"
+            android:layout_height="69dp"
+            android:layout_marginTop="0dp"
+            app:layout_constraintStart_toEndOf="@+id/imageMinusX"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/lepszyz" />
 
-    <ImageView
-        android:id="@+id/imageMinusY"
-        android:layout_width="46dp"
-        android:layout_height="83dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintStart_toEndOf="@+id/imageZ"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/lepszyminusy" />
+        <ImageView
+            android:id="@+id/imageMinusY"
+            android:layout_width="46dp"
+            android:layout_height="83dp"
+            android:layout_marginTop="0dp"
+            app:layout_constraintStart_toEndOf="@+id/imageZ"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/lepszyminusy" />
 
-    <ImageView
-        android:id="@+id/imageY"
-        android:layout_width="46dp"
-        android:layout_height="84dp"
-        android:layout_marginStart="170dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageMinusX"
-        app:srcCompat="@drawable/lepszyy"
-        android:layout_marginLeft="170dp" />
+        <ImageView
+            android:id="@+id/imageY"
+            android:layout_width="46dp"
+            android:layout_height="84dp"
+            android:layout_marginStart="0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageMinusX"
+            app:srcCompat="@drawable/lepszyy"
+            android:layout_marginLeft="170dp" />
 
-    <ImageView
-        android:id="@+id/imageMinusZ"
-        android:layout_width="34dp"
-        android:layout_height="69dp"
-        app:layout_constraintStart_toEndOf="@+id/imageY"
-        app:layout_constraintTop_toBottomOf="@+id/imageView"
-        app:srcCompat="@drawable/lepszyminusz" />
+        <ImageView
+            android:id="@+id/imageMinusZ"
+            android:layout_width="34dp"
+            android:layout_height="69dp"
+            app:layout_constraintStart_toEndOf="@+id/imageY"
+            app:layout_constraintTop_toBottomOf="@+id/imageView"
+            app:srcCompat="@drawable/lepszyminusz" />
 
-    <ImageView
-        android:id="@+id/imageX"
-        android:layout_width="46dp"
-        android:layout_height="84dp"
-        app:layout_constraintStart_toEndOf="@+id/imageMinusZ"
-        app:layout_constraintTop_toBottomOf="@+id/imageMinusY"
-        app:srcCompat="@drawable/lepszyx" />
+        <ImageView
+            android:id="@+id/imageX"
+            android:layout_width="46dp"
+            android:layout_height="84dp"
+            app:layout_constraintStart_toEndOf="@+id/imageMinusZ"
+            app:layout_constraintTop_toBottomOf="@+id/imageMinusY"
+            app:srcCompat="@drawable/lepszyx" />
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="34dp"
-        android:layout_height="29dp"
-        app:layout_constraintStart_toEndOf="@+id/imageY"
-        app:layout_constraintTop_toBottomOf="@+id/imageZ"
-        app:srcCompat="@drawable/lepszycenter" />
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="34dp"
+            android:layout_height="29dp"
+            app:layout_constraintStart_toEndOf="@+id/imageY"
+            app:layout_constraintTop_toBottomOf="@+id/imageZ"
+            app:srcCompat="@drawable/lepszycenter" />
+    </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/chart_container"
@@ -259,80 +271,78 @@
         android:layout_marginRight="200dp"
         />
 
-    <TextView
-        android:id="@+id/textView"
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/position_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="50dp"
-        android:layout_marginTop="16dp"
-        android:text="Current position"
-        app:layout_constraintStart_toEndOf="@+id/imageMinusY"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginLeft="50dp" />
+        android:layout_marginStart="100dp"
+        android:layout_marginLeft="100dp"
+        android:layout_marginTop="50dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imageViews_container"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <TextView
-        android:id="@+id/textView_position_A1"
-        android:layout_width="70dp"
-        android:layout_height="38dp"
-        android:layout_marginStart="50dp"
-        android:layout_marginTop="2dp"
-        android:text="A1:\n0 deg"
-        app:layout_constraintStart_toEndOf="@+id/imageMinusY"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
-        android:layout_marginLeft="50dp" />
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Current robot position"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/textView_position_A2"
-        android:layout_width="70dp"
-        android:layout_height="38dp"
-        android:layout_marginStart="125dp"
-        android:layout_marginTop="2dp"
-        android:text="A2:\n0 deg"
-        app:layout_constraintStart_toEndOf="@+id/imageMinusY"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
-        android:layout_marginLeft="50dp" />
+        <TextView
+            android:id="@+id/textView_position_A1"
+            android:layout_width="70dp"
+            android:layout_height="38dp"
+            android:layout_marginTop="2dp"
+            android:text="A1:\n0 "
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView" />
 
-    <TextView
-        android:id="@+id/textView_position_A3"
-        android:layout_width="70dp"
-        android:layout_height="38dp"
-        android:layout_marginStart="200dp"
-        android:layout_marginTop="2dp"
-        android:text="A3:\n0 deg"
-        app:layout_constraintStart_toEndOf="@+id/imageMinusY"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
-        android:layout_marginLeft="50dp" />
+        <TextView
+            android:id="@+id/textView_position_A2"
+            android:layout_width="70dp"
+            android:layout_height="38dp"
+            android:layout_marginTop="2dp"
+            android:text="A2:\n0 "
+            app:layout_constraintStart_toEndOf="@+id/textView_position_A1"
+            app:layout_constraintTop_toBottomOf="@+id/textView" />
 
-    <TextView
-        android:id="@+id/textView_position_A4"
-        android:layout_width="70dp"
-        android:layout_height="38dp"
-        android:layout_marginStart="50dp"
-        android:layout_marginTop="40dp"
-        android:text="A4:\n0 deg"
-        app:layout_constraintStart_toEndOf="@+id/imageMinusY"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
-        android:layout_marginLeft="50dp" />
+        <TextView
+            android:id="@+id/textView_position_A3"
+            android:layout_width="70dp"
+            android:layout_height="38dp"
+            android:layout_marginTop="2dp"
+            android:text="A3:\n0 "
+            app:layout_constraintStart_toEndOf="@+id/textView_position_A2"
+            app:layout_constraintTop_toBottomOf="@+id/textView" />
 
-    <TextView
-        android:id="@+id/textView_position_A5"
-        android:layout_width="70dp"
-        android:layout_height="38dp"
-        android:layout_marginStart="125dp"
-        android:layout_marginTop="40dp"
-        android:text="A5:\n0 deg"
-        app:layout_constraintStart_toEndOf="@+id/imageMinusY"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
-        android:layout_marginLeft="50dp" />
+        <TextView
+            android:id="@+id/textView_position_A4"
+            android:layout_width="70dp"
+            android:layout_height="38dp"
+            android:layout_marginTop="2dp"
+            android:text="A4:\n0 "
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView_position_A1" />
 
-    <TextView
-        android:id="@+id/textView_position_A6"
-        android:layout_width="70dp"
-        android:layout_height="38dp"
-        android:layout_marginStart="200dp"
-        android:layout_marginTop="40dp"
-        android:text="A6:\n0 deg"
-        app:layout_constraintStart_toEndOf="@+id/imageMinusY"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
-        android:layout_marginLeft="50dp" />
+        <TextView
+            android:id="@+id/textView_position_A5"
+            android:layout_width="70dp"
+            android:layout_height="38dp"
+            android:layout_marginTop="2dp"
+            android:text="A5:\n0 "
+            app:layout_constraintStart_toEndOf="@+id/textView_position_A4"
+            app:layout_constraintTop_toBottomOf="@+id/textView_position_A2" />
+
+        <TextView
+            android:id="@+id/textView_position_A6"
+            android:layout_width="70dp"
+            android:layout_height="38dp"
+            android:layout_marginTop="2dp"
+            android:text="A6:\n0 "
+            app:layout_constraintStart_toEndOf="@+id/textView_position_A5"
+            app:layout_constraintTop_toBottomOf="@+id/textView_position_A3" />
+    </android.support.constraint.ConstraintLayout>
+
 </android.support.constraint.ConstraintLayout>
