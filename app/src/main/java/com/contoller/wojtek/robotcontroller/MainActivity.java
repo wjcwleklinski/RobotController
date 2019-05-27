@@ -326,18 +326,18 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 //Log.i("UI Thread", Thread.currentThread().getName());
                     try {
                         // displaying raw angles
-                        angleX.setText(String.valueOf(Math.round(Math.toDegrees(angleThread.getFilteredAngles()[2]))));
-                        angleY.setText(String.valueOf(Math.round(Math.toDegrees(angleThread.getFilteredAngles()[1]))));
-                        angleZ.setText(String.valueOf(Math.round(Math.toDegrees(angleThread.getFilteredAngles()[0]))));
+                        angleX.setText(String.valueOf(Math.round(Math.toDegrees(angleThread.getFilteredAngles()[2]))) + " " + DEGREE_UNICODE);
+                        angleY.setText(String.valueOf(Math.round(Math.toDegrees(angleThread.getFilteredAngles()[1]))) + " " + DEGREE_UNICODE);
+                        angleZ.setText(String.valueOf(Math.round(Math.toDegrees(angleThread.getFilteredAngles()[0]))) + " " + DEGREE_UNICODE);
 
                         // displaying validated angles
                         validatedAngles[0] = Math.round(Math.toDegrees(angleThread.getValidatedAngles()[0]));
                         validatedAngles[1] = Math.round(Math.toDegrees(angleThread.getValidatedAngles()[1]));
                         validatedAngles[2] = Math.round(Math.toDegrees(angleThread.getValidatedAngles()[2]));
 
-                        aberrationX.setText(String.valueOf(validatedAngles[2]));
-                        aberrationY.setText(String.valueOf(validatedAngles[1]));
-                        aberrationZ.setText(String.valueOf(validatedAngles[0]));
+                        aberrationX.setText(String.valueOf(validatedAngles[2]) + " " + DEGREE_UNICODE);
+                        aberrationY.setText(String.valueOf(validatedAngles[1]) + " " + DEGREE_UNICODE);
+                        aberrationZ.setText(String.valueOf(validatedAngles[0]) + " " + DEGREE_UNICODE);
 
                         // changing arrows color
                         if (validatedAngles[2] > DEAD_ZONE) {

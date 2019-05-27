@@ -180,6 +180,8 @@ public class AngleThread extends Thread {
                 e.printStackTrace();
             }
 
+            // kukaconnthread setters here
+
             try {
                 if(client!=null) {
                     client.sendRequest(new Request(1, "MYPOS", "{X " + x + ",Y " + y + ",Z " + z + "}"));

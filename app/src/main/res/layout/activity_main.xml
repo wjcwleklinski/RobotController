@@ -89,8 +89,7 @@
         android:text="0"
         android:textSize="18sp"
         app:layout_constraintStart_toEndOf="@+id/checkBoxX"
-        app:layout_constraintTop_toBottomOf="@+id/labelz"
-        app:layout_constraintTop_toEndOf="@id/angleZ" />
+        app:layout_constraintTop_toBottomOf="@+id/labelz" />
 
     <TextView
         android:id="@+id/aberrationY"
@@ -172,7 +171,7 @@
         android:layout_height="25dp"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="60dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageViews_container" />
 
@@ -182,31 +181,32 @@
         android:layout_height="25dp"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="60dp"
         android:textSize="20sp"
         app:layout_constraintStart_toEndOf="@+id/seekBar"
         app:layout_constraintTop_toBottomOf="@+id/imageViews_container" />
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/imageViews_container"
-        android:layout_height="wrap_content"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="200dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginLeft="200dp"
+        android:layout_marginTop="20dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginLeft="200dp">
+        app:layout_constraintTop_toTopOf="parent">
+
         <ImageView
             android:id="@+id/imageMinusX"
             android:layout_width="46dp"
             android:layout_height="83dp"
             android:layout_marginStart="0dp"
+            android:layout_marginLeft="0dp"
             android:layout_marginTop="0dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/lepszyminusx"
-            android:layout_marginLeft="0dp" />
+            app:srcCompat="@drawable/lepszyminusx" />
 
         <ImageView
             android:id="@+id/imageZ"
@@ -231,10 +231,10 @@
             android:layout_width="46dp"
             android:layout_height="84dp"
             android:layout_marginStart="0dp"
+            android:layout_marginLeft="170dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageMinusX"
-            app:srcCompat="@drawable/lepszyy"
-            android:layout_marginLeft="170dp" />
+            app:srcCompat="@drawable/lepszyy" />
 
         <ImageView
             android:id="@+id/imageMinusZ"
@@ -265,11 +265,8 @@
         android:id="@+id/chart_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginEnd="200dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginRight="200dp"
-        />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/position_container"
@@ -277,7 +274,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="100dp"
         android:layout_marginLeft="100dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="20dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imageViews_container"
         app:layout_constraintTop_toTopOf="parent">
