@@ -18,8 +18,7 @@ import no.hials.crosscom.KRL.KRLVariable;
 import no.hials.crosscom.KRL.structs.KRLPos;
 import no.hials.crosscom.Request;
 
-/** This should be responsible for math processing and heavy lifting
- * Helper class with separate thread only to communicate with kuka would be much cleaner*/
+
 public class AngleThread extends Thread {
 
     private final int AXIS_COUNT = 3;
@@ -38,7 +37,6 @@ public class AngleThread extends Thread {
     private float[] pressedAngles = new float[AXIS_COUNT];
     private float[] validatedAngles = new float[AXIS_COUNT];
 
-    private SensorManager threadSensorManager;
     private Filter filter = new Filter(3);
 
     private boolean xCheckboxState = false, yCheckboxState = false, zCheckboxState = false;
@@ -50,12 +48,11 @@ public class AngleThread extends Thread {
     private int seekbarProgress = 1;
     private KalmanFilter kalmanFilter = new KalmanFilter();
     private double[] actualTorques = new double[6];
-    double[] actualAxisAngles = new double[6];
+    private double[] actualAxisAngles = new double[6];
 
 
-    public AngleThread(String name, SensorManager sensorManager, String IP, int port) {
+    public AngleThread(String name, String IP, int port) {
         super(name);
-        this.threadSensorManager = sensorManager;
         this.IP = IP;
         this.port = port;
         initArrays();
@@ -110,17 +107,9 @@ public class AngleThread extends Thread {
 
 
     public void run() {
-        CrossComClient client = null;
 
-        Log.i("AngleThread", "AngleThread started");
-        try {
-            client = new CrossComClient("192.168.2.210", 7000);
-            Log.i("Kuka connection", "Client created");
-        } catch(IOException ex) {
-            Log.i("Kuka connection", "Unable to create client");
-            Log.i("Kuka connection", ex.getMessage());
-            ex.printStackTrace();
-        }
+        KukaConnectorThread kukaThread = new KukaConnectorThread("KukaConnectorThread", IP, port);
+        kukaThread.start();
 
         while(!Thread.currentThread().isInterrupted()) {
             try {
@@ -180,24 +169,30 @@ public class AngleThread extends Thread {
                 e.printStackTrace();
             }
 
-            // kukaconnthread setters here
-
-            try {
-                if(client!=null) {
-                    client.sendRequest(new Request(1, "MYPOS", "{X " + x + ",Y " + y + ",Z " + z + "}"));
-                    client.sendRequest(new Request(0, "$OV_PRO", Integer.toString(seekbarProgress)));
-                    actualTorques = client.readJointTorques(); // CHECK THIS - WILD VALS
-                    actualAxisAngles = client.readJointAngles();
-                }
-            } catch (Exception ex) {
-                Log.i("Kuka connection: ", "Unable to send request");
+            // kukaconnthread here
+            if(kukaThread.connectionSuccessful) {
+                kukaThread.setOffsetPosition(x, y, z);
+                kukaThread.setPosition(validatedAngles);
+                kukaThread.setOv_pro(Integer.toString(seekbarProgress));
+                actualAxisAngles = kukaThread.getJointAngles();
+                actualTorques = kukaThread.getTorques();
             }
+//            try {
+//                if(client!=null) {
+//                    client.sendRequest(new Request(1, "MYPOS", "{X " + x + ",Y " + y + ",Z " + z + "}"));
+//                    client.sendRequest(new Request(0, "$OV_PRO", Integer.toString(seekbarProgress)));
+//                    actualTorques = client.readJointTorques(); // CHECK THIS - WILD VALS
+//                    actualAxisAngles = client.readJointAngles();
+//                }
+//            } catch (Exception ex) {
+//                Log.i("Kuka connection: ", "Unable to send request");
+//            }
         }
-        try {
-            client.close();
-        } catch (Exception ex) {
-            Log.i("Kuka connection", "Unable to close client");
-        }
+//        try {
+//            client.close();
+//        } catch (Exception ex) {
+//            Log.i("Kuka connection", "Unable to close client");
+//        }
     }
 
 
@@ -216,24 +211,6 @@ public class AngleThread extends Thread {
 
         Arrays.fill(actualAxisAngles, 0);
         Arrays.fill(actualTorques, 0);
-    }
-
-
-    private float[] movingAverage(float[] xBuffer, float[] yBuffer, float[] zBuffer) {
-
-        float[] filteredAngles = {0, 0, 0};
-        for (int i = 0; i < xBuffer.length; i++) {
-            filteredAngles[0] += xBuffer[i];
-            filteredAngles[1] += yBuffer[i];
-            filteredAngles[2] += zBuffer[i];
-        }
-
-        for(int i = 0; i < filteredAngles.length; i++) {
-            filteredAngles[i] = filteredAngles[i] / filteredAngles.length;
-        }
-
-
-        return filteredAngles;
     }
 
 

@@ -29,8 +29,8 @@ import java.net.InetAddress;
 
 public class MenuActivity extends Activity {
 
-    EditText editTextIP;
-    EditText editTextPort;
+    private EditText editText1, editText2, editText3, editText4;
+    private EditText editTextPort;
 
     private final String FILE_NAME = "log.txt";
     private final String LOCAL_PATH = "/RobotController";
@@ -40,15 +40,24 @@ public class MenuActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
-        editTextIP = findViewById(R.id.editTextIP);
+        //editTextIP = findViewById(R.id.editTextIP);
+        editText1 = findViewById(R.id.editTextIP1);
+        editText2 = findViewById(R.id.editTextIP2);
+        editText3 = findViewById(R.id.editTextIP3);
+        editText4 = findViewById(R.id.editTextIP4);
         editTextPort = findViewById(R.id.editTextPort);
 
         try {
             String dataFromFile = readFromFile();
-            editTextIP.setText(dataFromFile.split(":")[0]);
-            editTextPort.setText(dataFromFile.split(":")[1]);
+            String[] parts = dataFromFile.split("\\.");
+            editText1.setText(parts[0]);
+            editText2.setText(parts[1]);
+            editText3.setText(parts[2]);
+            editText4.setText(parts[3].split(":")[0]);
+            String port = parts[3].split(":")[1];
+            editTextPort.setText(port);
         } catch (IOException e) {
-            Log.i("IOException", "Unable to read from file");
+            Log.i("ReadFromFile", "Unable to read from file");
 
         }
 
@@ -56,10 +65,11 @@ public class MenuActivity extends Activity {
 
     public void onConnect(View view) {
 
-
-        String IP = editTextIP.getText().toString();
+        String IP = editText1.getText().toString() + "." +
+                editText2.getText().toString() + "." +
+                editText3.getText().toString() + "." +
+                editText4.getText().toString();
         String port = editTextPort.getText().toString();
-
         if(isExternalStorageWritable()) {
             if(hasPermissionToWrite(this)) {
                 writeToFile(IP + ":" + port);

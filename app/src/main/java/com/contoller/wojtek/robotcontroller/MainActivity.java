@@ -27,7 +27,6 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-/** This should be responsible only for UI in main thread */
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
@@ -61,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private final String TAG = "Main";
     private final int DEAD_ZONE = 2;
     private final char DEGREE_UNICODE = 0x00B0;
+    private final int UI_REFRESH_MS = 300;
 
     //--------------------------------------
     private float[] mAccelerometerReading = new float[3];
@@ -152,10 +152,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         registerSensor(Sensor.TYPE_MAGNETIC_FIELD, SensorManager.SENSOR_DELAY_NORMAL);
         registerSensor(Sensor.TYPE_GYROSCOPE, SensorManager.SENSOR_DELAY_NORMAL);
 
-
-        angleThread = new AngleThread("Angle Thread", sensorManager, IP, port);
+        /* Starting angle thread */
+        angleThread = new AngleThread("Angle Thread", IP, port);
         angleThread.start();
 
+        /* Updating UI with UI_REFRESH_MS */
         refreshUI();
 
 
@@ -201,12 +202,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         if(sensor != null) {
             sensorManager.registerListener(this, sensor, delay);
         } else {
-            Log.i("Null: ", "Sensor unregistered");
+            Log.i("Sensor Registration", "Sensor unregistered");
         }
     }
 
     /**
-     * Views initialization
+     * Views and listeners initialization
      */
     private void initViews() {
         angleX = findViewById(R.id.angleX);
@@ -232,7 +233,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     Log.i(TAG, "Action down.");
 
                     angleThread.setJogButtonPressed(true);
-                    vibrator.vibrate(200);
+                    // high vibration interval cause Kalman filter unnecessary distortion
+                    vibrator.vibrate(50);
 
                 }
                 // released
@@ -375,6 +377,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
                         // updating torque chart and its textViews
                         torqueChartFragment.setMeasurements(angleThread.getTorques());
+
                         positionA1.setText("A1:\n" + String.format("%.2f", angleThread.getActualAxisAngles()[0]) + " " + DEGREE_UNICODE);
                         positionA2.setText("A2:\n" + String.format("%.2f", angleThread.getActualAxisAngles()[1]) + " " + DEGREE_UNICODE);
                         positionA3.setText("A3:\n" + String.format("%.2f", angleThread.getActualAxisAngles()[2]) + " " + DEGREE_UNICODE);
@@ -384,8 +387,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
                     } catch (Exception ex) {
                         Log.i("RefreshUI", "Exception in refreshUI.");
+                        ex.getMessage();
                     }
-                    handler.postDelayed(this, 300);
+                    handler.postDelayed(this, UI_REFRESH_MS);
             }
         });
     }
